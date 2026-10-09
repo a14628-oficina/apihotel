@@ -1,0 +1,22 @@
+meta {
+  name: atualizar-hotel
+  type: http
+  seq: 1
+}
+
+put {
+  url: http://127.0.0.1:5000/hoteis/water2
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    
+    "nome": "Waterfsll Resort Beach",
+    "estrelas": 4.5,
+    "diaria": 217.99,
+    "cidade": "Cidade do Cabo"
+    
+  }
+}
