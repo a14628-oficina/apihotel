@@ -1,38 +1,33 @@
-from flask_restful import Resource, reqparse
-from models.user import UserModel
+from con_sql_alchemy import bd
 
-
-class User(Resource):
-    def get(self,username):
-        hotel = UserModel.find_hotel(username)
-        if username is not None:
-                return User.json(), 200
-        return {"mensagem":"Utilizador não foi encontrado"}
-
+class UserModel(bd.Model):
+    __tablename__ = "utilizadores"
+    user_id = bd.Column(bd.Integer, primary_key = True, autoincrement=True)
+    username = bd.Column(bd.String(40))
+    password = bd.Column(bd.String(40))
     
-    def delete(self,username):
-        user = UserModel.find_user(username)
-        if user is not None:
-            try:
-                user.delete_hotel()
-                return{"mensagem":"utilizador removido com sucesso"}, 200
-            except:
-                return{"mensagem":"Um erro interno do servidor aconteceu ..."}, 500
-        return{"mensagem":"Hotel não encontrado "}, 404
+    def __init__(self,username,password):
+        self.username = username
+        self.password = password
 
+    def json(self):
+        return{
+            "user_id": self.user_id,
+            "username": self.username
+        }
     
-class UserRegistar(Resource):
-        argumentos = reqparse.RequestParser()
-        argumentos.add_argument("username", type=str, required=True, help="O username é obrigatorio")
-        argumentos.add_argument("password", type=float, required=True, help="A password é obrigatorio")
+    @classmethod
+    def find_user(cls,username):
+        user = cls.query.filter_by(username = username).first() #Sem o first() devolve uma lista, com o first() devolve diretamente a instância do hotel
+        #SELECT * FROM hoteis WHERE hotel_id = hotel_id LIMIT 1
+        if user:
+            return user
+        return None
+    
+    def save_user(self):
+        bd.session.add(self)
+        bd.session.commit()
 
-        def post(self):
-            dados = UserRegistar.argumentos.parse_args()
-            if UserModel.find_user(dados["username"]):
-                 return ("mensagem": "Já existe um utilizador com este username"); 404
-            novo_utilizador = UserModel{**dados}
-            try:
-                 novo_utilizador.save_user()
-                 return ("mensagem": "Utilizador criado com sucesso"); 201
-            except:
-                 
+    def delete_user(self):
+        bd.session.delete(self)
+        bd.session.commit()

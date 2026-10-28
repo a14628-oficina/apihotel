@@ -1,28 +1,33 @@
+#venv é .venv/bin/activate | é um ambiente de trabalho virtual/maquina virtual
 from flask import Flask
-from flask_restful import Resource, Api, reqparse
-from resources.hotel import Hoteis, Hotel 
-from con_sql_alchemy import bd 
-from  resources.user import User, UserRegistar
-from con_sql_alchemy import bd 
+from flask_restful import Api
+from resources.hotel import Hoteis, Hotel
+from resources.user import user
+from resources.user import userRegister
+from resources.user import userLogin
+from con_sql_alchemy import bd
+from flask_jwt_extended import JWTManager
 
 
-app =Flask(__name__)
+app = Flask(__name__)
 api = Api(app)
+jwt = JWTManager(app)       # Inicializa o JWT para dizer que estou a trabalhar na minha API
 
-
-
-#configurações 
+#Configurações
+#SQLITE não se utiliza em base de dados
+#Foi utilizada agora por ser apenas um teste
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///hoteis.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["JWT_SECRET_KEY"] = "a_minha_chave_secreta_longa_e_intransmissivel"
+
 api.add_resource(Hoteis,"/hoteis")
-api.add_resource(Hotel,"/hoteis/<string:hotel_id>")
-api.add_resource(User,"/users/<string:username>")
-api.add_resource(UserRegistar,"/registar")
+api.add_resource(Hotel, "/hoteis/<string:hotel_id>")
+api.add_resource(user, "/users/<string:username>")
+api.add_resource(userRegister,"/registar")
+api.add_resource(userLogin, "/login")
 
-
-                 
 if __name__ == "__main__":
     bd.init_app(app)
     with app.app_context():
-        bd.create_all() #Cria todas as tabelas defininas no modelo do sqlalchemy
+        bd.create_all() #Cria todas as tabelas definidas no modelo do SQLAlchemy
     app.run(debug=True)
