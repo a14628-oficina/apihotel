@@ -1,7 +1,9 @@
 from flask_restful import Resource,reqparse
 from models.user import UserModel
 from hmac import compare_digest
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
+from blocklist import BLOCKLIST
+
 
 class user(Resource):  
     def get(self, username):
@@ -10,6 +12,7 @@ class user(Resource):
                 return user.json(), 200
         return  { "mensagem": "Utilizador não foi encontrado"}
 
+    @jwt_required
     def delete(self,username):
         user = UserModel.find_user(username) #Devolve o Utilizador ou devolve None
         if user is not None:
@@ -19,6 +22,7 @@ class user(Resource):
             except:
                 return {"Mensagem": "Um erro interno do servidor aconteceu ..."},500
         return {"Mensagem": "Hotel não encontrado"},404
+
 
 class userRegister(Resource):
     argumentos = reqparse.RequestParser()
@@ -51,3 +55,9 @@ class userLogin(Resource):
         return { "mensagem": "O utilizador ou password está incorreto!"}, 401
 
     
+class userLogout(Resource):
+    @jwt_required
+    def post(self):
+        jwt_id = get_jwt()["jti"] 
+        BLOCKLIST.add(jwt_required)
+        return { "mensagem": "Logout do Utilizadfor efetuado com sucesso"}, 200

@@ -5,9 +5,13 @@ meta {
 }
 
 post {
-  url: http://127.0.0.1:5000/hoteis/water
+  url: http://127.0.0.1:5000/hoteis/oficina
   body: json
   auth: none
+}
+
+headers {
+  Authorization: Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc5MzE4MTIzNCwianRpIjoiODVjMjE5N2ItZDMwOS00ZTQ0LWE3MzgtMzczY2UwNDgwNjYzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzkzMTgxMjM0LCJjc3JmIjoiYzBiZWI3MTEtZjk1Ni00NjM5LWE5NjctOWRiZDA4M2RmZjc5IiwiZXhwIjoxNzkzMTgyMTM0fQ.lK9rSLb8y9e8nzV5QbKYHGLcZIQAj12L3GeClDORpoU
 }
 
 body:json {
@@ -18,3 +22,4 @@ body:json {
     "cidade" : "Lisboa"
   }
 }
+​
