@@ -5,16 +5,21 @@ meta {
 }
 
 put {
-  url: http://127.0.0.1:5000/hoteis/water2
+  url: http://127.0.0.1:5000/hoteis/oficina
   body: json
   auth: none
 }
 
+headers {
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc5Mzc4NzQxOSwianRpIjoiZWUwNjhiZTItMGM1MS00ZjQ1LTk3NzktZjllOTFmZGE4NzEwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzkzNzg3NDE5LCJjc3JmIjoiODY3NDZiYWEtYTBjMy00NjQxLTg1MGYtNjk4MTM0ZmU3Njg5IiwiZXhwIjoxNzkzNzg4MDE5fQ.ORy84p2OfBL7zZhZ4VZFwKzBsfZ3QfVDJHgimLy8N0M
+}
+
 body:json {
   {
-    "nome": "Waterfall Resort Beach",
-    "estrelas": 4.3,
-    "diaria": 210.99,
-    "cidade" : "Lisboa"
+      "hotel_id": "oficina",
+      "nome": "Hotel Oficina",
+      "estrelas": 4.4,
+      "diaria": 190.99,
+      "cidade": "Santo Tirso"
   }
 }

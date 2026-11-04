@@ -22,6 +22,35 @@ class Hoteis(Resource):
         meus_filtros = Hoteis.parametros.parse_args()
         query = hotelModel.query
 
+        if meus_filtros["cidade"]:
+            query = query.filter(hotelModel.cidade == meus_filtros ["cidade"])
+
+        if meus_filtros["estrelas_min"]:
+                    query = query.filter(hotelModel.estrelas == meus_filtros ["estrelas_min"])
+
+        if meus_filtros["estrelas_max"]:
+                    query = query.filter(hotelModel.estrelas == meus_filtros ["estrelas_max"])
+
+        if meus_filtros["diaria_min"]:
+                    query = query.filter(hotelModel.diaria == meus_filtros ["diaria_min"])
+
+        if meus_filtros["diaria_max"]:
+                    query = query.filter(hotelModel.diaria == meus_filtros ["diaria_max"])
+
+        page = meus_filtros["pagina"]
+        num_hoteis_por_pagina = meus_filtros["itens"]
+        pagination = query.paginate(page=page, per_page=num_hoteis_por_pagina, error_out=False)
+
+
+        resultado_hotel = [hotel.json() for hotel in pagination.items]
+
+        return {
+            "hoteis": resultado_hotel,
+            "qtde_items": pagination.total,
+            "qtde_paginas": pagination.pages,
+            "pagina_atual": page
+            }
+
 
 class Hotel(Resource):
     argumentos = reqparse.RequestParser()
@@ -42,9 +71,11 @@ class Hotel(Resource):
         dados = Hotel.argumentos.parse_args() #dados é um dicionário
         hotel = hotelModel.find_hotel(hotel_id)
 
-        novo_hotel = hotelModel(hotel_id, **dados)
+        if hotel is not None:
+              return { "mensagem": "Hotel com este id já existe" }
 
         try:
+            novo_hotel = hotelModel(hotel_id, **dados)
             novo_hotel.save_hotel()
             return hotel.json(),200
         except:
@@ -57,19 +88,14 @@ class Hotel(Resource):
         
         #Se o hotel ID existe
         hotel = hotelModel.find_hotel(hotel_id)
-        if hotel is not None:
-            hotel.update_hotel(dados)
-            return hotel.json(),200
-
-        novo_hotel = hotelModel(hotel_id, **dados)
-
-        #Se o hotel ID não existir
-        try:
-            hotel.update_hotel(*dados)
-            hotel.save_hotel()
-            return hotel.json(),200
-        except:
-            return {"Mensagem": "Um erro interno do servidor aconteceu ..."},500
+        if hotel:
+            try:
+                lista = [dado for dado in dados.values()]
+                hotel.update_hotel(*lista)
+                hotel.save_hotel()
+                return hotel.json(),200
+            except:
+                return {"Mensagem": "Um erro interno do servidor aconteceu ..."},500
 
 
     @jwt_required()
